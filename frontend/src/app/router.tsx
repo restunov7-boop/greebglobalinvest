@@ -44,10 +44,22 @@ import { ProgressActivityPage } from "../modules/progress/ProgressActivityPage";
 import { TasteProfilePage } from "../modules/taste-profile/TasteProfilePage";
 import { PlaceholderPage } from "../shared/ui/PlaceholderPage";
 
+const projectSlug = import.meta.env.VITE_PROJECT_SLUG?.trim();
+const isGlobalGreenInvest = projectSlug === "global-green-invest";
+const defaultEntryPath = isGlobalGreenInvest ? "/app" : "/home";
+
+if (import.meta.env.DEV || import.meta.env.MODE === "staging") {
+  console.info("[CORE] frontend project env", {
+    projectSlug: projectSlug || "<unset>",
+    apiBaseUrl: import.meta.env.VITE_API_BASE_URL || "<default>",
+    defaultEntryPath,
+  });
+}
+
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/home" replace />,
+    element: <Navigate to={defaultEntryPath} replace />,
   },
   {
     path: "/loading",
@@ -145,6 +157,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <Navigate to="/home" replace />,
+    element: <Navigate to={defaultEntryPath} replace />,
   },
 ]);

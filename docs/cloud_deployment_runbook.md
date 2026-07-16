@@ -87,6 +87,20 @@ Do not add backend secrets to Vercel.
 
 Deploy the frontend.
 
+Important: if any `VITE_*` value is changed after the first deploy, redeploy the Vercel project. For this project, use:
+
+```text
+Vercel Project → Deployments → Redeploy → Use existing Build Cache: off
+```
+
+The cloud entrypoint for GlobalGreenInvest is:
+
+```text
+https://YOUR_FRONTEND.vercel.app/app
+```
+
+The root URL also redirects to `/app` when `VITE_PROJECT_SLUG=global-green-invest` is present at build time. If the root opens Wine Club, the deployed frontend bundle was built without the correct Vercel env or was not redeployed after env changes.
+
 ## 4. Update CORS
 
 After Vercel gives you the frontend URL, update Render:
