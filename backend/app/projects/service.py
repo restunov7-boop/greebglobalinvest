@@ -41,7 +41,17 @@ def ensure_project_user(db: Session, user: User, project: Project) -> ProjectUse
         role="member",
         status="active",
         is_premium=False,
+        access_state="active",
+        moderation_state="normal",
     )
     db.add(project_user)
     db.flush()
     return project_user
+
+
+def is_project_access_active(project_user: ProjectUser) -> bool:
+    return project_user.access_state == "active"
+
+
+def is_project_user_banned(project_user: ProjectUser) -> bool:
+    return project_user.moderation_state == "banned"

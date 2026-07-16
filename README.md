@@ -53,6 +53,84 @@ docker compose up --build
 
 In the current local environment Docker may not be present in `PATH`; use the local scripts above when that is the case.
 
+## GlobalGreenInvest Demo Launch
+
+The local GlobalGreenInvest demo does not require Docker or Postgres. The demo scripts use the SQLite dev database at `backend/local_dev.db`.
+
+From the repo root, start the GlobalGreenInvest local demo with:
+
+```powershell
+.\scripts\start_globalgreeninvest_demo.ps1
+```
+
+Optional browser open:
+
+```powershell
+.\scripts\start_globalgreeninvest_demo.ps1 -OpenBrowser
+```
+
+Refresh or check demo data without restarting servers:
+
+```powershell
+.\scripts\reseed_globalgreeninvest_demo.ps1
+.\scripts\check_globalgreeninvest_demo.ps1
+```
+
+Primary-test readiness checks:
+
+```powershell
+.\scripts\check_globalgreeninvest_primary_readiness.ps1
+.\scripts\check_globalgreeninvest_database.ps1
+.\scripts\check_globalgreeninvest_telegram.ps1
+```
+
+Prepare an explicitly configured primary test database:
+
+```powershell
+$env:DATABASE_URL="postgresql+psycopg://USER:PASSWORD@HOST:5432/DBNAME"
+.\scripts\prepare_globalgreeninvest_primary_test.ps1
+```
+
+Manual no-Docker fallback:
+
+```powershell
+.\scripts\reseed_globalgreeninvest_demo.ps1
+.\scripts\start_globalgreeninvest_backend_sqlite.ps1
+.\scripts\start_globalgreeninvest_frontend.ps1
+```
+
+More details:
+
+- `docs/globalgreeninvest_demo_runbook.md`
+- `docs/globalgreeninvest_primary_test_checklist.md`
+
+## GlobalGreenInvest Cloud Deploy
+
+Prepared deployment targets:
+
+- Backend: Render Web Service, root directory `backend`
+- Frontend: Vercel, root directory `frontend`
+- Database: Supabase PostgreSQL Session pooler
+
+Before deploy:
+
+```powershell
+.\scripts\check_no_secrets.ps1
+.\scripts\check_cloud_deploy_readiness.ps1
+```
+
+Backend cloud smoke after Render deploy:
+
+```powershell
+.\scripts\check_cloud_backend.ps1 -BackendBaseUrl "https://YOUR_BACKEND.onrender.com"
+```
+
+Cloud docs:
+
+- `docs/cloud_deployment_runbook.md`
+- `docs/render_backend_setup.md`
+- `docs/vercel_frontend_setup.md`
+
 ## Backend Local Setup
 
 ```powershell

@@ -13,6 +13,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.config import settings
+from app.community.permissions import COMMUNITY_PROJECT_NAME, COMMUNITY_PROJECT_SLUG
 from app.database import Base, SessionLocal, engine
 from app.diary import models as diary_models  # noqa: F401
 from app.discoveries import models as discovery_models  # noqa: F401
@@ -22,7 +23,9 @@ from app.learning.service import seed_demo_learning
 from app.main import app
 from app.progress import models as progress_models  # noqa: F401
 from app.projects import models as project_models  # noqa: F401
-from app.projects.service import ensure_default_project
+from app.projects.models import Project, ProjectUser
+from app.projects.service import ensure_default_project, get_project_by_slug
+from app.users.models import TelegramIdentity
 from app.users import models as user_models  # noqa: F401
 
 
@@ -32,6 +35,14 @@ def _reset_dev_user() -> None:
     settings.dev_telegram_id = "100001"
     settings.dev_telegram_username = "core_dev_user"
     settings.dev_telegram_first_name = "CORE"
+    settings.telegram_sender_mode = "mock"
+    settings.telegram_bot_token = ""
+    settings.telegram_real_send_scope = "pilot"
+    settings.telegram_pilot_chat_id = ""
+    settings.telegram_pilot_telegram_user_id = ""
+    settings.telegram_api_base_url = "https://api.telegram.org"
+    settings.telegram_send_timeout_seconds = 10
+    settings.telegram_send_rate_limit_per_second = 20
 
 
 @pytest.fixture(autouse=True)
@@ -71,8 +82,53 @@ def set_dev_user(
 def login(client: TestClient) -> dict[str, str]:
     response = client.post("/api/v1/auth/telegram", json={"init_data": "dev_mock_init_data"})
     assert response.status_code == 200, response.text
+    _ensure_test_community_project_user()
     token = response.json()["data"]["access_token"]
     return {"Authorization": f"Bearer {token}"}
+
+
+def _ensure_test_community_project_user() -> None:
+    db = SessionLocal()
+    try:
+        default_project = ensure_default_project(db)
+        default_project_user = (
+            db.query(ProjectUser)
+            .join(TelegramIdentity, TelegramIdentity.user_id == ProjectUser.user_id)
+            .filter(
+                ProjectUser.project_id == default_project.id,
+                TelegramIdentity.telegram_id == settings.dev_telegram_id,
+            )
+            .one()
+        )
+        project = get_project_by_slug(db, COMMUNITY_PROJECT_SLUG)
+        if project is None:
+            project = Project(slug=COMMUNITY_PROJECT_SLUG, name=COMMUNITY_PROJECT_NAME, is_active=True)
+            db.add(project)
+            db.flush()
+        project_user = (
+            db.query(ProjectUser)
+            .filter(ProjectUser.user_id == default_project_user.user_id, ProjectUser.project_id == project.id)
+            .one_or_none()
+        )
+        if project_user is None:
+            project_user = ProjectUser(
+                user_id=default_project_user.user_id,
+                project_id=project.id,
+                role=default_project_user.role,
+                status="active",
+                is_premium=False,
+                access_state="active",
+                moderation_state="normal",
+            )
+            db.add(project_user)
+        else:
+            project_user.role = default_project_user.role
+            project_user.status = "active"
+            project_user.access_state = "active"
+            project_user.moderation_state = "normal"
+        db.commit()
+    finally:
+        db.close()
 
 
 def complete_onboarding(client: TestClient, headers: dict[str, str]) -> dict:

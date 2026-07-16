@@ -20,6 +20,9 @@ class ProjectUserRead(BaseModel):
     status: str
     is_premium: bool
     premium_until: datetime | None = None
+    access_state: str
+    access_until: datetime | None = None
+    moderation_state: str
     capabilities: list[str] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)

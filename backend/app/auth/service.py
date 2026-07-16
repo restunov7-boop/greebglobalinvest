@@ -71,5 +71,8 @@ def project_user_to_read(project_user: ProjectUser) -> ProjectUserRead:
         status=project_user.status,
         is_premium=project_user.is_premium,
         premium_until=project_user.premium_until,
+        access_state=project_user.access_state,
+        access_until=project_user.access_until,
+        moderation_state=project_user.moderation_state,
         capabilities=get_capabilities_for_role(project_user.role),
     )

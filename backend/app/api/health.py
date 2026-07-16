@@ -8,7 +8,7 @@ def healthcheck() -> dict[str, object]:
     return {
         "data": {
             "status": "ok",
-            "service": "core-wine-club-backend",
+            "service": "core-community-backend",
         },
         "meta": {},
     }

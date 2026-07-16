@@ -3,4 +3,4 @@ def test_healthcheck_returns_ok(client):
 
     assert response.status_code == 200
     assert response.json()["data"]["status"] == "ok"
-    assert response.json()["data"]["service"] == "core-wine-club-backend"
+    assert response.json()["data"]["service"] == "core-community-backend"

@@ -4,6 +4,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.config import settings
+from app.community import models as community_models  # noqa: F401
 from app.database import Base
 from app.diary import models as diary_models  # noqa: F401
 from app.discoveries import models as discovery_models  # noqa: F401

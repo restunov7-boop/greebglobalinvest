@@ -12,6 +12,8 @@ from app.shared.db import TimestampMixin
 
 PROJECT_USER_ROLES = ("member", "moderator", "admin", "owner")
 PROJECT_USER_STATUSES = ("active", "blocked", "left")
+PROJECT_USER_ACCESS_STATES = ("pending", "active", "expired", "revoked")
+PROJECT_USER_MODERATION_STATES = ("normal", "banned")
 
 
 class Project(TimestampMixin, Base):
@@ -38,6 +40,9 @@ class ProjectUser(TimestampMixin, Base):
     status: Mapped[str] = mapped_column(String(32), default="active", server_default="active", nullable=False)
     is_premium: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
     premium_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    access_state: Mapped[str] = mapped_column(String(32), default="active", server_default="active", nullable=False)
+    access_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    moderation_state: Mapped[str] = mapped_column(String(32), default="normal", server_default="normal", nullable=False)
     onboarding_completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     onboarding_data_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     privacy_settings_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
@@ -54,5 +59,13 @@ class ProjectUser(TimestampMixin, Base):
         CheckConstraint(
             "status in ('active', 'blocked', 'left')",
             name="ck_project_users_status",
+        ),
+        CheckConstraint(
+            "access_state in ('pending', 'active', 'expired', 'revoked')",
+            name="ck_project_users_access_state",
+        ),
+        CheckConstraint(
+            "moderation_state in ('normal', 'banned')",
+            name="ck_project_users_moderation_state",
         ),
     )

@@ -5,6 +5,8 @@ import { PlaceholderPage } from "../../shared/ui/PlaceholderPage";
 import { useTelegram } from "../../shared/lib/telegram/useTelegram";
 
 const devTelegramMockEnabled = import.meta.env.VITE_DEV_TELEGRAM_MOCK === "true";
+const isGlobalGreenInvest = import.meta.env.VITE_PROJECT_SLUG === "global-green-invest";
+const authTitle = isGlobalGreenInvest ? "GlobalGreenInvest" : "CORE";
 
 export function AuthGuard({ children }: PropsWithChildren) {
   const telegram = useTelegram();
@@ -30,15 +32,15 @@ export function AuthGuard({ children }: PropsWithChildren) {
       return;
     }
 
-    setError("Telegram initData is missing. Open inside Telegram or enable VITE_DEV_TELEGRAM_MOCK=true.");
+    setError("Не удалось получить данные Telegram. Откройте приложение внутри Telegram или включите dev mock.");
   }, [accessToken, error, isAuthenticated, isLoading, loadMe, login, setError, telegram.initData]);
 
   if (error) {
-    return <PlaceholderPage title="Authentication error" description={error} />;
+    return <PlaceholderPage eyebrow={authTitle} title="Ошибка входа" description={error} />;
   }
 
   if (!isAuthenticated) {
-    return <PlaceholderPage title="Loading" description="Signing in with local dev Telegram mock..." />;
+    return <PlaceholderPage eyebrow={authTitle} title="Входим в приложение" description="Проверяем Telegram-доступ и профиль участника." />;
   }
 
   return <>{children}</>;

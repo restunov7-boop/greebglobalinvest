@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.health import router as health_router
 from app.auth.router import router as auth_router
 from app.bottle.router import router as bottle_router
+from app.community.admin_router import router as community_admin_router
+from app.community.router import router as community_router
 from app.config import settings
 from app.diary.router import router as diary_router
 from app.discoveries.router import router as discoveries_router
@@ -37,6 +39,8 @@ def create_app() -> FastAPI:
     app.include_router(learning_router, prefix=settings.api_v1_prefix)
     app.include_router(progress_router, prefix=settings.api_v1_prefix)
     app.include_router(bottle_router, prefix=settings.api_v1_prefix)
+    app.include_router(community_router, prefix=settings.api_v1_prefix)
+    app.include_router(community_admin_router, prefix=settings.api_v1_prefix)
     app.include_router(diary_router, prefix=settings.api_v1_prefix)
     app.include_router(taste_profile_router, prefix=settings.api_v1_prefix)
     app.include_router(my_path_router, prefix=settings.api_v1_prefix)
