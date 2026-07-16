@@ -10,6 +10,9 @@ export type ProjectUser = {
   status: "active" | "blocked" | "left";
   is_premium: boolean;
   premium_until: string | null;
+  access_state: "pending" | "active" | "expired" | "revoked";
+  access_until: string | null;
+  moderation_state: "normal" | "banned";
   capabilities: string[];
 };
 

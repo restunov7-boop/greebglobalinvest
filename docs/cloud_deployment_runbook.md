@@ -157,6 +157,15 @@ TELEGRAM_BOT_TOKEN=<token>
 TELEGRAM_PILOT_CHAT_ID=<your test chat id>
 ```
 
+For the frontend Telegram Mini App pilot, Vercel must use:
+
+```env
+VITE_DEV_TELEGRAM_MOCK=false
+VITE_PROJECT_SLUG=global-green-invest
+```
+
+The raw Telegram WebApp `initData` is sent to the backend for validation. The frontend must not send or trust `initDataUnsafe` for auth.
+
 Then:
 
 1. Restart backend.
@@ -166,6 +175,12 @@ Then:
 5. Process pending once.
 
 Do not switch to `TELEGRAM_REAL_SEND_SCOPE=all` until production delivery rules are approved.
+
+Detailed Telegram pilot setup:
+
+```text
+docs/telegram_blogger_pilot_setup.md
+```
 
 ## 7. Readiness Commands
 

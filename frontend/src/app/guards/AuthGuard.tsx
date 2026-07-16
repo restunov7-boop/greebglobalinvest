@@ -1,5 +1,5 @@
 import { PropsWithChildren, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 import { useAuthStore } from "../../modules/auth/store";
 import { CommunityAuthState } from "../../modules/community/ui/CommunityState";
@@ -13,8 +13,9 @@ const authTitle = isGlobalGreenInvest ? "GlobalGreenInvest" : "CORE";
 export function AuthGuard({ children }: PropsWithChildren) {
   const telegram = useTelegram();
   const location = useLocation();
-  const { accessToken, isAuthenticated, isLoading, error, login, loadMe, setError } = useAuthStore();
+  const { accessToken, isAuthenticated, isLoading, error, login, loadMe, projectUser, setError } = useAuthStore();
   const isCommunityRoute = location.pathname.startsWith("/app") || (isGlobalGreenInvest && location.pathname.startsWith("/admin"));
+  const isSystemRoute = location.pathname === "/app/locked" || location.pathname === "/app/banned";
 
   useEffect(() => {
     if (isAuthenticated || isLoading || error) {
@@ -36,7 +37,7 @@ export function AuthGuard({ children }: PropsWithChildren) {
       return;
     }
 
-    setError("Не удалось получить данные Telegram. Откройте приложение внутри Telegram или включите dev mock.");
+    setError("Открой приложение через Telegram-бота. В браузере прямой вход отключён для реального пилота.");
   }, [accessToken, error, isAuthenticated, isLoading, loadMe, login, setError, telegram.initData]);
 
   if (error) {
@@ -62,6 +63,15 @@ export function AuthGuard({ children }: PropsWithChildren) {
       );
     }
     return <PlaceholderPage eyebrow={authTitle} title="Входим в приложение" description="Проверяем Telegram-доступ и профиль участника." />;
+  }
+
+  if (isCommunityRoute && projectUser?.project_slug === "global-green-invest" && !isSystemRoute) {
+    if (projectUser.moderation_state === "banned") {
+      return <Navigate to="/app/banned" replace />;
+    }
+    if (projectUser.status !== "active" || projectUser.access_state !== "active") {
+      return <Navigate to="/app/locked" replace />;
+    }
   }
 
   return <>{children}</>;

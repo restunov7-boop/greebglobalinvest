@@ -122,6 +122,8 @@ export function CommunityDashboardPage() {
         </DashboardPanel>
       )}
 
+      <DashboardChatsSection items={dashboard.chat_links} />
+
       <div className="community-dashboard__columns">
         <DashboardPanel title="Новости и посты">
           {dashboard.posts.length > 0 ? (
@@ -147,15 +149,28 @@ export function CommunityDashboardPage() {
           )}
         </DashboardPanel>
       </div>
+    </section>
+  );
+}
 
-      {dashboard.chat_links.length > 0 && (
-        <DashboardPanel title="Актуальные чаты">
-          <div className="community-chat-grid">
-            {dashboard.chat_links.map((item) => (
-              <ChatLinkCard key={item.id} item={item} />
-            ))}
-          </div>
-        </DashboardPanel>
+function DashboardChatsSection({ items }: { items: CommunityDashboardChatLink[] }) {
+  return (
+    <section className="community-dashboard-panel community-dashboard-panel--chats">
+      <header className="community-dashboard-panel__header community-dashboard-panel__header--row">
+        <div>
+          <span>Telegram channels</span>
+          <h2>Актуальные чаты</h2>
+          <p>Быстрый доступ к рабочим каналам и обсуждениям.</p>
+        </div>
+      </header>
+      {items.length > 0 ? (
+        <div className="community-chat-row" aria-label="Актуальные чаты">
+          {items.map((item) => (
+            <ChatLinkCard key={item.id} item={item} />
+          ))}
+        </div>
+      ) : (
+        <p className="community-dashboard__muted">Чаты скоро появятся.</p>
       )}
     </section>
   );
@@ -238,8 +253,10 @@ function InsightCard({ item }: { item: CommunityDashboardInsightItem }) {
 function ChatLinkCard({ item }: { item: CommunityDashboardChatLink }) {
   return (
     <a className="community-chat-card" href={item.telegram_url} target="_blank" rel="noreferrer">
-      <span>{String(item.sort_order + 1).padStart(2, "0")}</span>
+      <span className="community-chat-card__marker" />
       <strong>{item.title}</strong>
+      <small>Telegram</small>
+      <em>Открыть →</em>
     </a>
   );
 }

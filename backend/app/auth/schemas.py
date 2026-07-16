@@ -6,6 +6,7 @@ from app.users.schemas import UserSummary
 
 class TelegramAuthRequest(BaseModel):
     init_data: str
+    project_slug: str | None = None
 
 
 class AuthSession(BaseModel):

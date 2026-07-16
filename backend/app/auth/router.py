@@ -18,7 +18,7 @@ def login_with_telegram(
     payload: TelegramAuthRequest,
     db: Annotated[Session, Depends(get_db)],
 ) -> dict[str, object]:
-    session = authenticate_with_telegram(db, payload.init_data)
+    session = authenticate_with_telegram(db, payload.init_data, project_slug=payload.project_slug)
     return success_response(session.model_dump(mode="json"))
 
 
