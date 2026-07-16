@@ -6,8 +6,8 @@ import { EmptyState } from "../ui/CommunityState";
 import { ErrorState } from "../ui/CommunityState";
 import { LoadingState } from "../ui/CommunityState";
 import { getCommunityDashboard } from "../api";
+import { FloatingChatsDock } from "../FloatingChatsDock";
 import type {
-  CommunityDashboardChatLink,
   CommunityDashboardContentItem,
   CommunityDashboardInsightItem,
   CommunityDashboardNotification,
@@ -105,7 +105,9 @@ export function CommunityDashboardPage() {
   }
 
   return (
-    <section className="community-dashboard">
+    <section className={dashboard.chat_links.length > 0 ? "community-dashboard community-dashboard--with-floating-chats" : "community-dashboard"}>
+      <FloatingChatsDock chats={dashboard.chat_links} />
+
       {dashboard.important_notifications.length > 0 && (
         <DashboardPanel title="Важное" tone="important">
           <div className="community-dashboard__stack">
@@ -121,8 +123,6 @@ export function CommunityDashboardPage() {
           <ContentCard item={dashboard.pinned_post} to={`/app/posts/${dashboard.pinned_post.id}`} featured />
         </DashboardPanel>
       )}
-
-      <DashboardChatsSection items={dashboard.chat_links} />
 
       <div className="community-dashboard__columns">
         <DashboardPanel title="Новости и посты">
@@ -149,29 +149,6 @@ export function CommunityDashboardPage() {
           )}
         </DashboardPanel>
       </div>
-    </section>
-  );
-}
-
-function DashboardChatsSection({ items }: { items: CommunityDashboardChatLink[] }) {
-  return (
-    <section className="community-dashboard-panel community-dashboard-panel--chats">
-      <header className="community-dashboard-panel__header community-dashboard-panel__header--row">
-        <div>
-          <span>Telegram channels</span>
-          <h2>Актуальные чаты</h2>
-          <p>Быстрый доступ к рабочим каналам и обсуждениям.</p>
-        </div>
-      </header>
-      {items.length > 0 ? (
-        <div className="community-chat-row" aria-label="Актуальные чаты">
-          {items.map((item) => (
-            <ChatLinkCard key={item.id} item={item} />
-          ))}
-        </div>
-      ) : (
-        <p className="community-dashboard__muted">Чаты скоро появятся.</p>
-      )}
     </section>
   );
 }
@@ -247,16 +224,5 @@ function InsightCard({ item }: { item: CommunityDashboardInsightItem }) {
         <span>{usefulLabel(item)}</span>
       </div>
     </Link>
-  );
-}
-
-function ChatLinkCard({ item }: { item: CommunityDashboardChatLink }) {
-  return (
-    <a className="community-chat-card" href={item.telegram_url} target="_blank" rel="noreferrer">
-      <span className="community-chat-card__marker" />
-      <strong>{item.title}</strong>
-      <small>Telegram</small>
-      <em>Открыть →</em>
-    </a>
   );
 }
