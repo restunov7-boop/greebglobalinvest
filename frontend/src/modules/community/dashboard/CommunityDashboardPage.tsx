@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+﻿import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { ApiError } from "../../../shared/api/client";
-import { EmptyState } from "../../../shared/ui/EmptyState";
-import { ErrorState } from "../../../shared/ui/ErrorState";
-import { LoadingState } from "../../../shared/ui/LoadingState";
+import { EmptyState } from "../ui/CommunityState";
+import { ErrorState } from "../ui/CommunityState";
+import { LoadingState } from "../ui/CommunityState";
 import { getCommunityDashboard } from "../api";
 import type {
   CommunityDashboardChatLink,

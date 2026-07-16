@@ -1,6 +1,8 @@
 import { PropsWithChildren, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 import { useAuthStore } from "../../modules/auth/store";
+import { CommunityAuthState } from "../../modules/community/ui/CommunityState";
 import { PlaceholderPage } from "../../shared/ui/PlaceholderPage";
 import { useTelegram } from "../../shared/lib/telegram/useTelegram";
 
@@ -10,7 +12,9 @@ const authTitle = isGlobalGreenInvest ? "GlobalGreenInvest" : "CORE";
 
 export function AuthGuard({ children }: PropsWithChildren) {
   const telegram = useTelegram();
+  const location = useLocation();
   const { accessToken, isAuthenticated, isLoading, error, login, loadMe, setError } = useAuthStore();
+  const isCommunityRoute = location.pathname.startsWith("/app") || (isGlobalGreenInvest && location.pathname.startsWith("/admin"));
 
   useEffect(() => {
     if (isAuthenticated || isLoading || error) {
@@ -36,10 +40,27 @@ export function AuthGuard({ children }: PropsWithChildren) {
   }, [accessToken, error, isAuthenticated, isLoading, loadMe, login, setError, telegram.initData]);
 
   if (error) {
+    if (isCommunityRoute) {
+      return (
+        <CommunityAuthState
+          tone="error"
+          title="Не удалось подключить закрытую панель"
+          description={error}
+        />
+      );
+    }
     return <PlaceholderPage eyebrow={authTitle} title="Ошибка входа" description={error} />;
   }
 
   if (!isAuthenticated) {
+    if (isCommunityRoute) {
+      return (
+        <CommunityAuthState
+          title="Подключаем закрытую панель сообщества"
+          description="Проверяем Telegram-доступ и синхронизируем профиль участника."
+        />
+      );
+    }
     return <PlaceholderPage eyebrow={authTitle} title="Входим в приложение" description="Проверяем Telegram-доступ и профиль участника." />;
   }
 

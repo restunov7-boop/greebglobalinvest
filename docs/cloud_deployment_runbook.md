@@ -101,6 +101,15 @@ https://YOUR_FRONTEND.vercel.app/app
 
 The root URL also redirects to `/app` when `VITE_PROJECT_SLUG=global-green-invest` is present at build time. If the root opens Wine Club, the deployed frontend bundle was built without the correct Vercel env or was not redeployed after env changes.
 
+Login, loading, locked, banned, and community error states should show:
+
+```text
+🍀 ЗЕЛЁНЫЙ / TG Investor
+project: global-green-invest
+```
+
+They should not show `CORE Wine Club` or `Дочь винодела` on `/app` or community `/admin/*` routes.
+
 ## 4. Update CORS
 
 After Vercel gives you the frontend URL, update Render:

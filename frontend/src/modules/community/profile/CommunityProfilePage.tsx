@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 
-import { ErrorState } from "../../../shared/ui/ErrorState";
-import { LoadingState } from "../../../shared/ui/LoadingState";
+import { ErrorState } from "../ui/CommunityState";
+import { LoadingState } from "../ui/CommunityState";
 import { getCommunityProfile } from "../api";
 import type { CommunityProfile } from "../types";
 

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { EmptyState } from "../../../shared/ui/EmptyState";
-import { ErrorState } from "../../../shared/ui/ErrorState";
-import { LoadingState } from "../../../shared/ui/LoadingState";
+import { EmptyState } from "../ui/CommunityState";
+import { ErrorState } from "../ui/CommunityState";
+import { LoadingState } from "../ui/CommunityState";
 import { listCommunityProducts } from "../api";
 import type { CommunityProduct } from "../types";
 

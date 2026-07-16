@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 
-import { ErrorState } from "../../../shared/ui/ErrorState";
-import { LoadingState } from "../../../shared/ui/LoadingState";
+import { ErrorState } from "../ui/CommunityState";
+import { LoadingState } from "../ui/CommunityState";
 import {
   approveAndGrantCommunityAdminPurchaseRequest,
   listCommunityAdminProducts,
